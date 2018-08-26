@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="8dp"
-    tools:context=".MainActivity">
+    tools:context=".activity.MainActivity">
 
     <Button
         android:id="@+id/btnCurLocation"
@@ -23,7 +23,7 @@
         android:layout_marginTop="10dp"
         android:height="100dp"
         android:singleLine="false"
-        android:text="Current Lcation"
+        android:text="@string/current_location"
         android:textSize="20sp" />
 
 
@@ -47,7 +47,6 @@
         android:textSize="20sp" />
 
     <ToggleButton
-        android:onClick="onClick"
         android:id="@+id/tbtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

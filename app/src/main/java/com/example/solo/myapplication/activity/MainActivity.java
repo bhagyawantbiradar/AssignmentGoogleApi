@@ -1,10 +1,12 @@
-package com.example.solo.myapplication;
+package com.example.solo.myapplication.activity;
 
 import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -13,9 +15,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import com.example.solo.myapplication.R;
 import com.example.solo.myapplication.utils.Constants;
 import com.example.solo.myapplication.utils.StoreData;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
@@ -63,14 +67,34 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         init();
+
+        tbtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                if(isChecked){
+                    if (hasLcaionPermission()) {
+
+                    } else {
+                        tbtn.setChecked(false);
+                        requestLocationPermission();
+                    }
+                }else{
+
+                    StoreData.putBoolean(MainActivity.this,Constants.IS_SERVICE_STARTED,false);
+                }
+            }
+        });
     }
 
     private void init() {
-        curtAddress = StoreData.getString(this, CURRENT_ADDRESS, "CURRENT LOCATION UNKNOWN");
-        destAddress = StoreData.getString(this, DESTINATION_ADDRESS, "DESTINATION LOCATION UNKNOWN");
+        curtAddress = StoreData.getString(this, CURRENT_ADDRESS, "CURRENT LOCATION IS UNKNOWN");
+        destAddress = StoreData.getString(this, DESTINATION_ADDRESS, "DESTINATION LOCATION IS UNKNOWN");
         destLat = StoreData.getString(this, DEST_LAT, "0");
         destLng = StoreData.getString(this, DEST_LNG, "0");
 
+        tvCurLocation.setText(curtAddress);
+        tvDestLocation.setText(destAddress);
     }
 
     private void pickLocation(int resquestCode) {
@@ -115,13 +139,6 @@ public class MainActivity extends AppCompatActivity {
             case R.id.btnDestLocation:
                 pickLocation(REQUEST_CODE_DEST_LOCATION);
                 break;
-            case R.id.tbtn:
-                if (hasLcaionPermission()) {
-
-                } else {
-                    requestLocationPermission();
-                }
-                break;
         }
     }
 
@@ -132,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean hasLcaionPermission() {
         return ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
     }
-3
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -151,14 +168,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showRationalePermissionDialog() {
-        AlertDialog alertDialog = new AlertDialog(this);
-
+        final AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
+        alertDialog.setMessage("Click on 'APP INFO' and allow permission to access device location");
         alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "APP INFO", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-
+                alertDialog.dismiss();
+                Intent intent = new Intent();
+                intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                Uri uri = Uri.fromParts("package", getPackageName(), null);
+                intent.setData(uri);
+                startActivity(intent);
             }
         });
+
+        alertDialog.show();
     }
 
     private void startServiceFunction() {

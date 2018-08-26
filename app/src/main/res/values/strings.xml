@@ -2,7 +2,8 @@
     <string name="app_name">My Application</string>
     <string name="select_current_location">Select Current Location</string>
     <string name="select_destination_location">Select Destination Location</string>
-    <string name="destination_lcation">Destination Lcation</string>
+    <string name="destination_lcation">Destination Location</string>
     <string name="start">START</string>
     <string name="stop">STOP</string>
+    <string name="current_location">Current Location</string>
 </resources>
